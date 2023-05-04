@@ -1,0 +1,26 @@
+services:
+  mysqldb:
+    ports:
+      - 5432:5432
+    container_name: mysql_container
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: javauser
+    volumes:
+      - /custom/mount:/var/lib/mysql/data
+
+  springboot:
+    build: .
+    image: springboot_container
+    container_name: springboot_container
+    ports:
+      - 8080:8080
+    environment:
+      mysqldb-url: jdbc:mysql://mysqldb:5432/testdb?createIfNotExists=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      mysqldb-username: javauser
+      mysqldb-password: javauser
+    depends_on:
+      - mysqldb
+
