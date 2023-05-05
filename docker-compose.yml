@@ -1,24 +1,29 @@
 version: '3.8'
 services:
+
   postgres:
-    image: postgres
-    container_name: postgres-container
+    image: postgres:13.3
+    container_name: postgres_container
+    environment:
+      POSTGRES_DB: "test_postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ../2. Init Database:/docker-entrypoint-initdb.d
+      - .:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    environment:
-      POSTGRES_PASSWORD: root
-      POSTGRES_USER: root
-      POSTGRES_DB: test_postgres
 
 
   springboot:
-    image: jirafus400/spring_postgres
+    image: springboot_postgres
     container_name: springboot_container
     ports:
-      - 8080:8080
+      - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-container:5432/test_postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_container:5432/test_postgres
     depends_on:
       - postgres
 
