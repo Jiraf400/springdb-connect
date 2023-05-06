@@ -10,14 +10,13 @@ services:
       POSTGRES_PASSWORD: "password"
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
-      - ../2. Init Database:/docker-entrypoint-initdb.d
-      - .:/var/lib/postgresql/data
+      - ./postgres:/data/postgres
+    #      - .:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
-
   springboot:
-    image: springboot_postgres
+    image: registry.hub.docker.com/jirafus400/spring_postgres
     container_name: springboot_container
     ports:
       - "8080:8080"
@@ -26,4 +25,15 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_container:5432/test_postgres
     depends_on:
       - postgres
+      - eureka-server
+
+    ## Eureka Server
+  eureka-server:
+    image: registry.hub.docker.com/jirafus400/eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
 
