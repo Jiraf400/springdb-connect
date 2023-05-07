@@ -12,7 +12,10 @@ services:
     volumes:
       - ./postgres:/data/postgres
     ports:
-      - "5432:5432"
+      - "5431:5431"
+    command: -p 5431
+    expose:
+      - "5431"
 
   springboot:
     image: registry.hub.docker.com/jirafus400/spring_postgres
@@ -21,7 +24,7 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_container:5432/test_postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_container:5431/test_postgres
     depends_on:
       - postgres
       - eureka-server
